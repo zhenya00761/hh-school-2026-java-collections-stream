@@ -4,8 +4,9 @@ import common.Person;
 import common.PersonService;
 import common.PersonWithResumes;
 import common.Resume;
-import java.util.Collection;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /*
   Еще один вариант задачи обогащения
@@ -21,7 +22,35 @@ public class Task8 {
   }
 
   public Set<PersonWithResumes> enrichPersonsWithResumes(Collection<Person> persons) {
-    Set<Resume> resumes = personService.findResumes(Set.of());
-    return Set.of();
+
+      Map<Integer, Set<Resume>> personMap = new HashMap<>();
+      Set<PersonWithResumes> personWithResumes = new HashSet<>();
+
+      for (Person person : persons) {
+          personMap.put(person.id(), new HashSet<Resume>());
+      }
+
+      Set<Integer> personsId = persons.stream()
+              .map(person -> person.id())
+              .collect(Collectors.toSet());
+
+    Set<Resume> resumes = personService.findResumes(personsId);
+
+      for (Resume resume : resumes) {
+          Set<Resume> resumesPerson = personMap.get(resume.personId());
+          resumesPerson.add(resume);
+      }
+
+      for (Person person : persons) {
+          personWithResumes.add(new PersonWithResumes(person, personMap.get(person.id())));
+      }
+
+    return personWithResumes;
   }
 }
+
+/*
+    В этой задаче у меня была основная идея, что итеррировать каждый элемент из persons и для каждого искать подходящий
+    по id элемент из resumes очень долго. Лучше всего проитерировать persons и resumes отдельно, чтобы после пробега по persons
+    можно всего один раз пробежаться по resumes, для этого подойдет HashMap. Так будет оптимальная сложность O(n).
+ */
