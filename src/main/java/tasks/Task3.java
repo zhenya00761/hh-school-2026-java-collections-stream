@@ -8,31 +8,16 @@ import java.util.*;
 Задача 3
 Отсортировать коллекцию сначала по фамилии, по имени (при равной фамилии), и по дате создания (при равных фамилии и имени)
  */
-public class Task3 implements Comparator<Person>{
+public class Task3{
 
   public static List<Person> sort(Collection<Person> persons) {
-
-      List<Person> personList = new ArrayList<>(persons);
-
-      personList.sort(new Task3());
-
-      return personList;
+      return persons.stream()
+          .sorted(Comparator.comparing(Person::secondName)
+              .thenComparing(Person::firstName)
+              .thenComparing(Person::createdAt))
+          .toList();
   }
 
-  @Override
-  public int compare(Person person1, Person person2){
-      int secondName = person1.secondName().compareTo(person2.secondName());
-      if (secondName != 0) {
-          return secondName;
-      }
-
-      int firstName = person1.firstName().compareTo(person2.firstName());
-      if (firstName != 0) {
-          return firstName;
-      }
-
-      return person1.createdAt().compareTo(person2.createdAt());
-  }
 }
 
 

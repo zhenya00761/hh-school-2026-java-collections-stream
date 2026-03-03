@@ -1,14 +1,8 @@
 package tasks;
 
 import common.Person;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -37,9 +31,6 @@ public class Task9 {
   если кто-то захочет добавить в этот List что-то и сможет это сделать
    */
   public List<String> getNames(List<Person> persons) {
-    if (persons.isEmpty()) {
-      return Collections.emptyList();
-    }
 
     /*
     Заменил persons.remove(0) на .skip(1), так как нам необходимо именно конвертировать,
@@ -55,7 +46,7 @@ public class Task9 {
 
   // Зачем-то нужны различные имена этих же персон (без учета фальшивой разумеется)
   /*
-  Сама Java предложила поменять на этот вариант преобразования к Set,
+  Сама IDEA предложила поменять на этот вариант преобразования к Set,
   я не вижу ничего плохого в этом преобразовании,
   так как изначальное преобразование более громоздкое
   Нам не надо использовать .stream(), чтобы выполнить одну терминальную операцию
@@ -68,22 +59,9 @@ public class Task9 {
 
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
   public String convertPersonToString(Person person) {
-    String result = "";
-    if (person.secondName() != null) {
-      result += person.secondName();
-    }
-
-    if (person.firstName() != null) {
-      result += " " + person.firstName();
-    }
-
-    /*
-    Замена, чтобы возвращать правильно ФИО
-     */
-    if (person.middleName() != null) {
-      result += " " + person.middleName();
-    }
-    return result;
+    return Stream.of(person.secondName(), person.firstName(), person.middleName())
+        .filter(Objects::nonNull)
+        .collect(Collectors.joining(" "));
   }
 
   /*
@@ -94,14 +72,8 @@ public class Task9 {
    */
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-
-    Map<Integer, String> map = new HashMap<>();
-    for (Person person : persons) {
-      if (!map.containsKey(person.id())) {
-        map.put(person.id(), convertPersonToString(person));
-      }
-    }
-    return map;
+    return persons.stream()
+        .collect(Collectors.toMap(Person::id, this::convertPersonToString));
   }
 
   /*

@@ -15,12 +15,10 @@ public class Task7 {
 
   public static Set<String> vacancyNames(Collection<Company> companies) {
 
-      Set<String> vacancies = companies.stream()
-              .flatMap(company -> company.getVacancies().stream())
-              .map(vacancy -> vacancy.getTitle())
-              .collect(Collectors.toCollection(HashSet::new));
-
-      return vacancies;
+      return companies.stream()
+          .flatMap(company -> company.getVacancies().stream())
+          .map(Vacancy::getTitle)
+          .collect(Collectors.toSet());
   }
 
 }

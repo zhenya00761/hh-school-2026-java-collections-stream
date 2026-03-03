@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /*
 Имеются
@@ -21,28 +22,26 @@ public class Task6 {
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
 
-      Map<Integer, String> personMap = new HashMap<>();
-      Map<Integer, String> areaMap = new HashMap<>();
-      Set<String> result = new HashSet<>();
+      Map<Integer, String> areaMap = areas.stream()
+          .collect(Collectors.toMap(Area::getId, Area::getName));
 
-      for (Person person : persons) {
-          personMap.put(person.id(), person.firstName());
-      }
+//        Set<String> result = new HashSet<>();
 
-      for (Area area : areas) {
-          areaMap.put(area.getId(), area.getName());
-      }
+//      for (Map.Entry<Integer, Set<Integer>> entry : personAreaIds.entrySet()) {
+//          Integer key = entry.getKey();
+//          Set<Integer> valueSet = entry.getValue();
+//
+//          for (Integer areaId : valueSet) {
+//              result.add(personMap.get(key) + " - " + areaMap.get(areaId));
+//          }
+//      }
 
-      for (Map.Entry<Integer, Set<Integer>> entry : personAreaIds.entrySet()) {
-          Integer key = entry.getKey();
-          Set<Integer> valueSet = entry.getValue();
-
-          for (Integer areaId : valueSet) {
-              result.add(personMap.get(key) + " - " + areaMap.get(areaId));
-          }
-      }
-
-    return result;
+      return persons.stream()
+          .filter(person -> personAreaIds.containsKey(person.id()))
+          .flatMap(person -> personAreaIds.get(person.id()).stream()
+              .filter(areaMap::containsKey)
+              .map(areId -> person.firstName() + " - " + areaMap.get(areId)))
+          .collect(Collectors.toSet());
   }
 }
 

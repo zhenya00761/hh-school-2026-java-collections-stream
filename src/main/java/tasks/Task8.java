@@ -23,29 +23,22 @@ public class Task8 {
 
   public Set<PersonWithResumes> enrichPersonsWithResumes(Collection<Person> persons) {
 
-      Map<Integer, Set<Resume>> personMap = new HashMap<>();
-      Set<PersonWithResumes> personWithResumes = new HashSet<>();
-
-      for (Person person : persons) {
-          personMap.put(person.id(), new HashSet<Resume>());
-      }
-
       Set<Integer> personsId = persons.stream()
-              .map(person -> person.id())
+              .map(Person::id)
               .collect(Collectors.toSet());
 
     Set<Resume> resumes = personService.findResumes(personsId);
 
-      for (Resume resume : resumes) {
-          Set<Resume> resumesPerson = personMap.get(resume.personId());
-          resumesPerson.add(resume);
-      }
+    Map<Integer, Set<Resume>> personMap = resumes.stream()
+        .collect(Collectors.groupingBy(Resume::personId, HashMap::new, Collectors.toSet()));
 
-      for (Person person : persons) {
-          personWithResumes.add(new PersonWithResumes(person, personMap.get(person.id())));
-      }
+    for (Person person : persons) {
+      personMap.putIfAbsent(person.id(), new LinkedHashSet<>());
+    }
 
-    return personWithResumes;
+    return persons.stream()
+        .map(person -> new PersonWithResumes(person, personMap.get(person.id())))
+        .collect(Collectors.toSet());
   }
 }
 

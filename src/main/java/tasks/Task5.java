@@ -24,15 +24,10 @@ public class Task5 {
   }
 
   public List<ApiPersonDto> convert(List<Person> persons, Map<Integer, Integer> personAreaIds) {
-      List<ApiPersonDto> personsDto = new ArrayList<>();
 
-      for (Person person : persons) {
-          Integer areaId = personAreaIds.get(person.id());
-          ApiPersonDto personDto = personConverter.convert(person, areaId);
-          personsDto.add(personDto);
-      }
-
-      return personsDto;
+      return persons.stream()
+          .map(person -> personConverter.convert(person, personAreaIds.get(person.id())))
+          .toList();
   }
 }
 
