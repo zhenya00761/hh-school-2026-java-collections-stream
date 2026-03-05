@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /*
 Имеются
@@ -19,6 +21,34 @@ public class Task6 {
   public static Set<String> getPersonDescriptions(Collection<Person> persons,
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
-    return new HashSet<>();
+
+      Map<Integer, String> areaMap = areas.stream()
+          .collect(Collectors.toMap(Area::getId, Area::getName));
+
+//        Set<String> result = new HashSet<>();
+
+//      for (Map.Entry<Integer, Set<Integer>> entry : personAreaIds.entrySet()) {
+//          Integer key = entry.getKey();
+//          Set<Integer> valueSet = entry.getValue();
+//
+//          for (Integer areaId : valueSet) {
+//              result.add(personMap.get(key) + " - " + areaMap.get(areaId));
+//          }
+//      }
+
+      return persons.stream()
+          .flatMap(person -> personAreaIds.getOrDefault(person.id(), Set.of()).stream()
+              .filter(areaMap::containsKey)
+              .map(areId -> person.firstName() + " - " + areaMap.get(areId)))
+          .collect(Collectors.toSet());
   }
 }
+
+/*
+    Здесь из-за того что в функцию передали Collection<Person> persons и Collection<Area> areas,
+    сразу появилась мысль, что можно преобразовать их в HashMap. Это даст сложность О(n ),
+    так как нам надо будет пробегать по personAreaIds, а для каждой пары нужно искать Person и Area по id,
+    что через HashMap будет выполнятся за константу, но по personAreaIds все равно придется пробежать,
+    и по Set<Integer> тоже придется пробежать, что даст сложность О(n).
+    Запись уже результата лучше в HashSet, так как firstName и area могут совпасть у разных людей.
+ */

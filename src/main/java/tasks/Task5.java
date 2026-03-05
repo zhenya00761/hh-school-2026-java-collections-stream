@@ -6,6 +6,7 @@ import common.PersonConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
 Задача 5
@@ -23,6 +24,17 @@ public class Task5 {
   }
 
   public List<ApiPersonDto> convert(List<Person> persons, Map<Integer, Integer> personAreaIds) {
-    return new ArrayList<>();
+
+      return persons.stream()
+          .map(person -> personConverter.convert(person, personAreaIds.get(person.id())))
+          .toList();
   }
 }
+
+/*
+    Тут немного не понял, что лучше Stream API или простой перебор,
+    но посчитал что так будет удобнее и понятнее, так как если делать через Stream API,
+    то пришлось бы обращаться к personAreaIds (чтобы найти person.id())
+    в .map() и прямо в этой команде конвертировать в ApiPersonDto
+    (да и не особо понял как это сделать)
+ */
