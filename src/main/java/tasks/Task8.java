@@ -33,11 +33,11 @@ public class Task8 {
         .collect(Collectors.groupingBy(Resume::personId, HashMap::new, Collectors.toSet()));
 
     for (Person person : persons) {
-      personMap.putIfAbsent(person.id(), new LinkedHashSet<>());
+      personMap.putIfAbsent(person.id(), new HashSet<>());
     }
 
     return persons.stream()
-        .map(person -> new PersonWithResumes(person, personMap.get(person.id())))
+        .map(person -> new PersonWithResumes(person, personMap.getOrDefault(person.id(), Set.of())))
         .collect(Collectors.toSet());
   }
 }

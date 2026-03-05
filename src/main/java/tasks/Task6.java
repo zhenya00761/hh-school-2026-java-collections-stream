@@ -37,8 +37,7 @@ public class Task6 {
 //      }
 
       return persons.stream()
-          .filter(person -> personAreaIds.containsKey(person.id()))
-          .flatMap(person -> personAreaIds.get(person.id()).stream()
+          .flatMap(person -> personAreaIds.getOrDefault(person.id(), Set.of()).stream()
               .filter(areaMap::containsKey)
               .map(areId -> person.firstName() + " - " + areaMap.get(areId)))
           .collect(Collectors.toSet());

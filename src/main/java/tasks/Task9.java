@@ -73,7 +73,7 @@ public class Task9 {
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
     return persons.stream()
-        .collect(Collectors.toMap(Person::id, this::convertPersonToString));
+        .collect(Collectors.toMap(Person::id, Person::firstName));
   }
 
   /*
